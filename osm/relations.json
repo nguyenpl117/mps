@@ -1,0 +1,399 @@
+[
+    {
+        "name": "Bắc trung bộ",
+        "key": "bac-trung-bo",
+        "fill": "rgb(244, 200, 131)",
+        "hoverFill": "rgb(250,175,59)",
+        "id": 3770501,
+        "children": [
+            {
+                "id": "1891483",
+                "key": "thua-thien-hue",
+                "name": "Thừa Thiên Huế"
+            },
+            {
+                "id": "1895630",
+                "key": "quang-tri",
+                "name": "Quảng Trị"
+            },
+            {
+                "id": "1896050",
+                "key": "quang-binh",
+                "name": "Quảng Bình"
+            },
+            {
+                "id": "1898458",
+                "key": "ha-tinh",
+                "name": "Hà Tĩnh"
+            },
+            {
+                "id": "1898509",
+                "key": "nghe-an",
+                "name": "Nghệ An"
+            },
+            {
+                "id": "1898590",
+                "key": "thanh-hoa",
+                "name": "Thanh Hóa"
+            }
+        ]
+    },
+    {
+        "name": "Đông bắc bộ",
+        "key": "dong-bac-bo",
+        "fill": "rgb(159, 217, 146)",
+        "hoverFill": "rgb(71,152,53)",
+        "id": 3770517,
+        "children": [
+            {
+                "id": "1844412",
+                "key": "cao-bang",
+                "name": "Cao Bằng"
+            },
+            {
+                "id": "1902930",
+                "key": "phu-tho",
+                "name": "Phú Thọ"
+            },
+            {
+                "id": "1902941",
+                "key": "bac-giang",
+                "name": "Bắc Giang"
+            },
+            {
+                "id": "1902947",
+                "key": "quang-ninh",
+                "name": "Quảng Ninh"
+            },
+            {
+                "id": "1902967",
+                "key": "thai-nguyen",
+                "name": "Thái Nguyên"
+            },
+            {
+                "id": "1903418",
+                "key": "tuyen-quang",
+                "name": "Tuyên Quang"
+            },
+            {
+                "id": "1903471",
+                "key": "bac-kan",
+                "name": "Bắc Kạn"
+            },
+            {
+                "id": "1903478",
+                "key": "ha-giang",
+                "name": "Hà Giang"
+            },
+            {
+                "id": "5522596",
+                "key": "lang-son",
+                "name": "Lạng Sơn"
+            }
+        ]
+    },
+    {
+        "name": "ĐB sông cửu long",
+        "key": "dong-bang-song-cuu-long",
+        "fill": "rgb(253, 189, 196)",
+        "hoverFill": "rgb(246,129,143)",
+        "id": 3771291,
+        "children": [
+            {
+                "id": "1873490",
+                "key": "ca-mau",
+                "name": "Cà Mau"
+            },
+            {
+                "id": "1873533",
+                "key": "bac-lieu",
+                "name": "Bạc Liêu"
+            },
+            {
+                "id": "1873632",
+                "key": "soc-trang",
+                "name": "Sóc Trăng"
+            },
+            {
+                "id": "1873642",
+                "key": "tra-vinh",
+                "name": "Trà Vinh"
+            },
+            {
+                "id": "1874249",
+                "key": "hau-giang",
+                "name": "Hậu Giang"
+            },
+            {
+                "id": "1874283",
+                "key": "can-tho",
+                "name": "Cần Thơ"
+            },
+            {
+                "id": "1874471",
+                "key": "kien-giang",
+                "name": "Kiên Giang"
+            },
+            {
+                "id": "1875748",
+                "key": "an-giang",
+                "name": "An Giang"
+            },
+            {
+                "id": "1875866",
+                "key": "dong-thap",
+                "name": "Đồng Tháp"
+            },
+            {
+                "id": "1875887",
+                "key": "vinh-long",
+                "name": "Vĩnh Long"
+            },
+            {
+                "id": "1875968",
+                "key": "ben-tre",
+                "name": "Bến Tre"
+            },
+            {
+                "id": "1876011",
+                "key": "tien-giang",
+                "name": "Tiền Giang"
+            },
+            {
+                "id": "1877236",
+                "key": "long-an",
+                "name": "Long An"
+            }
+        ]
+    },
+    {
+        "name": "ĐB sông hồng",
+        "key": "dong-bang-song-hong",
+        "fill": "rgb(253, 189, 196)",
+        "hoverFill": "rgb(236,80,98)",
+        "id": 3769301,
+        "children": [
+            {
+                "id": "1900963",
+                "key": "ninh-binh",
+                "name": "Ninh Bình"
+            },
+            {
+                "id": "1901008",
+                "key": "nam-dinh",
+                "name": "Nam Định"
+            },
+            {
+                "id": "1901010",
+                "key": "ha-nam",
+                "name": "Hà Nam"
+            },
+            {
+                "id": "1901019",
+                "key": "thai-binh",
+                "name": "Thái Bình"
+            },
+            {
+                "id": "1901032",
+                "key": "hung-yen",
+                "name": "Hưng Yên"
+            },
+            {
+                "id": "1902682",
+                "key": "hai-phong",
+                "name": "Hải Phòng"
+            },
+            {
+                "id": "1902686",
+                "key": "hai-duong",
+                "name": "Hải Dương"
+            },
+            {
+                "id": "1902690",
+                "key": "bac-ninh",
+                "name": "Bắc Ninh"
+            },
+            {
+                "id": "1902889",
+                "key": "vinh-phuc",
+                "name": "Vĩnh Phúc"
+            },
+            {
+                "id": "1903516",
+                "key": "ha-noi",
+                "name": "Hà Nội"
+            }
+        ]
+    },
+    {
+        "name": "Đồng nam bộ",
+        "key": "dong-nam-bo",
+        "fill": "rgb(159, 217, 146)",
+        "hoverFill": "rgb(85,224,55)",
+        "id": 3770621,
+        "children": [
+            {
+                "id": "1886159",
+                "key": "ninh-thuan",
+                "name": "Ninh Thuận"
+            },
+            {
+                "id": "1898841",
+                "key": "binh-phuoc",
+                "name": "Bình Phước"
+            },
+            {
+                "id": "1898961",
+                "key": "tay-ninh",
+                "name": "Tây Ninh"
+            },
+            {
+                "id": "1904231",
+                "key": "binh-thuan",
+                "name": "Bình Thuận"
+            },
+            {
+                "id": "1904296",
+                "key": "ba-ria-vung-tau",
+                "name": "Bà Rịa - Vũng Tàu"
+            },
+            {
+                "id": "1904421",
+                "key": "dong-nai",
+                "name": "Đồng Nai"
+            },
+            {
+                "id": "1906037",
+                "key": "binh-duong",
+                "name": "Bình Dương"
+            },
+            {
+                "id": "1973756",
+                "key": "ho-chi-minh",
+                "name": "Hồ Chí Minh"
+            }
+        ]
+    },
+    {
+        "name": "Nam trung bộ",
+        "key": "nam-trung-bo",
+        "fill": "rgb(143, 180, 238)",
+        "hoverFill": "rgb(82,147,246)",
+        "id": 3770591,
+        "children": [
+            {
+                "id": "1886159",
+                "key": "ninh-thuan",
+                "name": "Ninh Thuận"
+            },
+            {
+                "id": "1887959",
+                "key": "khanh-hoa",
+                "name": "Khánh Hòa"
+            },
+            {
+                "id": "1889204",
+                "key": "phu-yen",
+                "name": "Phú Yên"
+            },
+            {
+                "id": "1889794",
+                "key": "binh-dinh",
+                "name": "Bình Định"
+            },
+            {
+                "id": "1890793",
+                "key": "quang-ngai",
+                "name": "Quảng Ngãi"
+            },
+            {
+                "id": "1891352",
+                "key": "quang-nam",
+                "name": "Quảng Nam"
+            },
+            {
+                "id": "1891418",
+                "key": "da-nang",
+                "name": "Đà Nẵng"
+            },
+            {
+                "id": "1904231",
+                "key": "binh-thuan",
+                "name": "Bình Thuận"
+            }
+        ]
+    },
+    {
+        "name": "Tây bắc bộ",
+        "key": "tay-bac-bo",
+        "fill": "rgb(119, 193, 241)",
+        "hoverFill": "rgb(68,169,234)",
+        "id": 3770582,
+        "children": [
+            {
+                "id": "1902973",
+                "key": "hoa-binh",
+                "name": "Hòa Bình"
+            },
+            {
+                "id": "1903199",
+                "key": "yen-bai",
+                "name": "Yên Bái"
+            },
+            {
+                "id": "1903291",
+                "key": "son-la",
+                "name": "Sơn La"
+            },
+            {
+                "id": "1903322",
+                "key": "lai-chau",
+                "name": "Lai Châu"
+            },
+            {
+                "id": "1903340",
+                "key": "dien-bien",
+                "name": "Điện Biên"
+            },
+            {
+                "id": "1903400",
+                "key": "lao-cai",
+                "name": "Lào Cai"
+            }
+        ]
+    },
+    {
+        "name": "Tây nguyên",
+        "key": "tay-nguyen",
+        "fill": "rgb(219, 147, 227)",
+        "hoverFill": "rgb(217,55,236)",
+        "id": 3770609,
+        "children": [
+            {
+                "id": "1879515",
+                "key": "kon-tum",
+                "name": "Kon Tum"
+            },
+            {
+                "id": "1884018",
+                "key": "gia-lai",
+                "name": "Gia Lai"
+            },
+            {
+                "id": "1884034",
+                "key": "dak-lak",
+                "name": "Đắk Lắk"
+            },
+            {
+                "id": "1884042",
+                "key": "dak-nong",
+                "name": "Đắk Nông"
+            },
+            {
+                "id": "1885367",
+                "key": "lam-dong",
+                "name": "Lâm Đồng"
+            }
+        ]
+    }
+]

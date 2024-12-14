@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MPS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./css/svgmap.css">
+    <script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.min.js"></script>
+    <script src="https://unpkg.com/tippy.js@6/dist/tippy-bundle.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+            integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"
+    />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.7/dist/cdn.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ["Open Sans", "serif"],
+                    },
+                    colors: {
+                        primary: {
+                            '50': '#cce5ff',
+                            '100': '#9acafe',
+                            '200': '#67b0fe',
+                            '300': '#3496fe',
+                            '400': '#0163cb',
+                            '500': '#0156b2',
+                            '600': '#014a98',
+                            '700': '#01458e',
+                            '800': '#013e7f',
+                            '900': '#013165',
+                            '950': '#00254c'
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="items-center grid grid-cols-12 gap-12 px-4 py-2 border-b shadow">
+    <div class="col-span-2 text-blue-900">
+        <a href="" class="font-bold text-xl">MPS</a>
+        <p class="text-sm">Mô tả</p>
+    </div>
+    <div class="col-span-5 hidden lg:block">
+        <div class="relative border rounded w-full pl-12">
+            <label for="search" class="!sr-only">Search in</label>
+            <input type="search" id="search"
+                   placeholder="Type your search keyword..."
+                   class="w-full h-12 px-2 border-none focus:!shadow-none focus:!outline-0"/>
+            <button type="submit" class="w-10 h-10 flex items-center justify-center absolute top-1/2 left-2 -translate-y-1/2 text-gray-400">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search w-6h-auto" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0"></path>
+                    <path d="M21 21l-6 -6"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="col-span-5 hidden lg:flex justify-end">
+        <div class="flex gap-2">
+            <a href="#" title="English"
+               data-gt-lang="en"
+               class="glink nturl notranslate">
+                <img loading="lazy" src="./flags/en.svg" width="32" height="32" alt="en">
+            </a>
+            <a href="#" title="Vietnamese"
+               data-gt-lang="vi"
+               class="glink nturl notranslate gt-current-lang">
+                <img loading="lazy" src="./flags/vi.svg"
+                     width="32" height="32" alt="vi">
+            </a>
+        </div>
+    </div>
+</div>
+<div class="flex flex-col lg:flex-row w-screen relative"
+     id="mps-container"
+     x-on:mousemove="swipeMouseMove"
+     x-on:touchmove="$el => swipeMouseMove($el.touches[0])"
+     style="height: calc(100vh - 67px)"
+     x-data="mps">
+    <button type="button"
+            x-on:click="onGoToVietnamMap"
+            class="border px-3 rounded text-xs absolute top-2 left-2 flex items-center bg-white z-[9999]">
+        <img src="./img/back-arrow.svg" alt="go to vietnam map">
+        <span>Việt Nam Map</span>
+    </button>
+    <div class="flex-1 relative flex justify-center overflow-hidden">
+        <div id="map" class="w-full h-full"></div>
+        <div role="loading"
+             x-bind:class="{'flex': loading, 'hidden': !loading}"
+             class="absolute inset-0 w-full h-full z-[9999] flex justify-center items-center bg-gray-900/50">
+            <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+    </div>
+    <div class="lg:hidden h-[100px]"></div>
+    <div id="main-content"
+         class="flex-1 transition-all fixed bottom-0 w-full bg-white
+          max-h-[calc(100vh-167px)]
+          lg:max-h-full
+          z-[9999] lg:flex lg:flex-col lg:relative border-t overflow-hidden">
+        <div id="swipe-handle"
+             x-on:mousedown="swipeMouseDown"
+             x-on:touchstart="$el => swipeMouseDown($el.touches[0])"
+             class="w-full h-8 flex lg:hidden items-center justify-between bg-white text-gray-300 px-2">
+            <div x-on:click="onSwipeDown">
+                <svg class="style-svg replaced-svg svg-replaced-0" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                    <path d="M6 9l6 6l6 -6"></path>
+                </svg>
+            </div>
+            <div id="swipe-toggle" class="w-[30%] h-[6px] bg-current rounded-full"></div>
+            <div x-on:click="onSwipeUp">
+                <svg class="style-svg replaced-svg svg-replaced-0 rotate-180" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                    <path d="M6 9l6 6l6 -6"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="relative flex flex-col h-full">
+            <div class="py-4 border-b px-2 hidden lg:flex items-center gap-2">
+                <button type="button"
+                        x-on:click="onGotoRegionKey(relationSelected?.key)"
+                        x-bind:class="{'hidden': !provinceSelected?.key}"
+                        class="flex justify-center items-center w-6 h-6 rounded-full border border-blue-900 hover:bg-blue-900 hover:text-white">
+                    <svg class="style-svg h-2/3 w-auto replaced-svg svg-replaced-2" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                        <path d="M15 6l-6 6l6 6"></path>
+                    </svg>
+                </button>
+                <strong class="text-xl text-blue-900">Chọn khu vực</strong>
+            </div>
+            <div id="regions-header" class="border-b">
+                <div class="px-2 py-3 lg:grid grid-cols-3 xl:grid-cols-4 gap-1 hidden">
+                    <template x-for="item in regions">
+                        <a href="#"
+                           x-on:mouseenter="onFocusRegion(item.key)"
+                           x-on:mouseleave="outFocusRegion(item.key)"
+                           x-on:click="onGotoRegionKey(item.key)"
+                           x-bind:class="{
+                       'bg-blue-900 text-white': relationSelected?.key === item.key,
+                       'bg-gray-200 hover:border hover:text-blue-900 border-blue-900': relationSelected?.key !== item.key
+                       }"
+                           class="h-9 text-xs flex gap-1 items-center justify-center rounded uppercase">
+                            <span x-text="item.name">Bắc trung bộ</span>
+                            <div class="flex">
+                                <svg  class="style-svg w-4 h-4 replaced-svg svg-replaced-3" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                                    <path d="M3 21h18"></path>
+                                    <path d="M5 21v-12l5 4v-4l5 4h4"></path>
+                                    <path d="M19 21v-8l-1.436 -9.574a.5 .5 0 0 0 -.495 -.426h-1.145a.5 .5 0 0 0 -.494 .418l-1.43 8.582"></path>
+                                    <path d="M9 17h1"></path>
+                                    <path d="M14 17h1"></path>
+                                </svg>
+                                42
+                            </div>
+                        </a>
+                    </template>
+                </div>
+                <div class="px-2 py-2" x-bind:class="{'hidden': !relationSelected?.id}">
+                    <select x-on:change="onChangeProvince"
+                            id="mps-list-province"
+                            class="border shadow rounded w-full h-10 px-2 focus:border-blue-800 outline-blue-800">
+                        <option value="">Chọn khu vực</option>
+                        <template x-for="item in relationSelected?.children">
+                            <option x-bind:value="item.key" x-text="item.name">Chọn khu vực</option>
+                        </template>
+                    </select>
+                </div>
+            </div>
+            <!--         x-bind:class="{'hidden': !provinceSelected?.id}"-->
+            <div class="p-4 border-b" x-bind:class="{'hidden': !provinceSelected?.id}">
+                <div class="flex">
+                    <div class="flex-1 flex items-center gap-2">
+                        <h4 class="font-bold" x-text="provinceSelected?.name">
+                            Bắc giang
+                        </h4>
+                        <div class="flex items-center">
+                            <svg  class="style-svg w-4 h-4 replaced-svg svg-replaced-3" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                                <path d="M3 21h18"></path>
+                                <path d="M5 21v-12l5 4v-4l5 4h4"></path>
+                                <path d="M19 21v-8l-1.436 -9.574a.5 .5 0 0 0 -.495 -.426h-1.145a.5 .5 0 0 0 -.494 .418l-1.43 8.582"></path>
+                                <path d="M9 17h1"></path>
+                                <path d="M14 17h1"></path>
+                            </svg>
+                            42
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <a class="flex items-center gap-2 hover:text-blue-900"
+                           x-on:click.prevent="showInfoProvince = true"
+                           href="#">
+                            <svg id="svg-replaced-12" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" height="24" width="24" class="style-svg w-4 h-4 replaced-svg svg-replaced-12" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                <path d="M9 17h6"></path>
+                                <path d="M9 13h6"></path>
+                            </svg>
+                            <span>Thông tin tỉnh</span>
+                        </a>
+                        <a class="flex items-center gap-2 hover:text-green-500" href="#">
+                            <svg id="svg-replaced-13" stroke-linejoin="round" stroke-linecap="round" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" height="24" width="24" class="style-svg w-4 h-4 replaced-svg svg-replaced-13" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="none" d="M0 0h24v24H0z" stroke="none"></path>
+                                <path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                                <path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                                <path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0"></path>
+                                <path d="M8.7 10.7l6.6 -3.4"></path>
+                                <path d="M8.7 13.3l6.6 3.4"></path>
+                            </svg>
+                            <span>Chỉa sẻ</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4" x-bind:class="{'block': !provinceSelected?.id, 'hidden': provinceSelected?.id}">
+                nd bai viet
+            </div>
+            <div class="p-4 overflow-auto h-full" x-bind:class="{'hidden': !provinceSelected?.id, 'block': provinceSelected?.id}">
+                <div class=" flex flex-col gap-4">
+                    <template x-for="item in [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]">
+                        <div class="flex gap-4">
+                            <a href="#"
+                               x-on:click.prevent="onGotoPinKey(1)"
+                               class="overflow-hidden rounded aspect-square w-[173px]">
+                                <img class="w-full h-full" src="https://iphub.vn/wp-content/uploads/2023/08/gia-lach-300x169.jpg" alt="thumb">
+                            </a>
+                            <div class="flex-1 flex flex-col gap-3">
+                                <a href="#"
+                                   x-on:click.prevent="onGotoPinKey(1)"
+                                   class="text-blue-900 font-bold">Gia Lách – IP</a>
+                                <div>
+                                    <p>Tổng diện tích: 350</p>
+                                    <p>Địa chỉ: Thị trấn Xuân An, huyện Nghi Xuân, tỉnh Hà Tĩnh</p>
+                                </div>
+                                <div class="flex gap-4">
+                                    <button type="button"
+                                            x-on:click.prevent="onGotoPinKey(1)"
+                                            class="px-4 py-1 rounded bg-blue-900 text-white flex gap-2">
+                                        <img src="./img/pin.svg" alt="icon">
+                                        Xem vị trí
+                                    </button>
+                                    <!--                        <button type="button">Lưu</button>-->
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div role="article"
+                 x-bind:class="{'translate-x-full': !showInfoProvince}"
+                 class="absolute top-0 right-0 w-full h-full bg-white overflow-auto transition-all">
+                <a href="#"
+                   x-on:click.prevent="showInfoProvince = false"
+                   class="close absolute top-2 right-2 flex items-center justify-center w-10 h-10 bg-black text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-1/2 h-1/2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </a>
+
+                <div class="p-6">
+                    <h1 class="entry-title font-bold text-lg lg:text-2xl mb-4">Phú Thọ</h1>
+                    <div class="entry-content">
+                        <p><b>Phú Thọ</b><br>
+                            <b>Vị trí:</b> Phú Thọ là một tỉnh Trung du miền núi phía Bắc của Việt Nam, có vị trí trung tâm vùng và là cửa ngõ phía Tây Bắc của Thủ đô Hà Nội. Tỉnh Phú Thọ nằm trên trục hành lang kinh tế Hải Phòng – Hà Nội – Côn Minh (Trung Quốc), phía Đông giáp tỉnh Vĩnh Phúc, phía Tây tiếp giáp thành phố Hà Nội, phía Nam giáp tỉnh Hoà Bình, phía Bắc giáp tỉnh Yên Bái và Tuyên Quang. Phú Thọ cách sân bay quốc tế Nội Bài 50km, cách Trung tâm thành phố Hà Nội 80km, cách cảng Hải Phòng 170km, cách cửa khẩu quốc tế Hà Khẩu (giữa Lào Cai – Việt Nam và Vân Nam – Trung Quốc) và cửa khẩu Thanh Thủy – Lạng Sơn 200km và là nơi hợp lưu của ba con sông lớn: sông Hồng, sông Đà và sông Lô.</p>
+                        <p><b>Diện tích:</b> 3.534,56 km²</p>
+                        <p><b>Dân số: </b>1.507.500 người</p>
+                        <p><b>GRDP (2022):</b> 88.810 tỉ đồng (3,74 tỉ USD)</p>
+                        <p><b>GRDP đầu người (2022):</b> 58,9 triệu đồng (2.489 USD)</p>
+                        <p><b>Hạ tầng giao thông:&nbsp;</b></p>
+                        <p><b>Đường bộ: </b>Đường bộ có quốc lộ 2, quốc lộ 32, quốc lộ 70 đi qua.</p>
+                        <p><b>Đường sắt:</b> Đường sắt có tuyến đường sắt Hà Nội – Lào Cai đi qua 5 huyện thị: thành phố Việt Trì, Lâm Thao, thị xã Phú Thọ, Thanh Ba, Hạ Hòa.</p>
+                        <p><b>Đường thủy: </b>Đường thủy có sông Đà, sông Hồng, sông Lô chảy qua.</p>
+                        <p><b>Khu công nghiệp:</b> 7 khu công nghiệp với 2.366 ha</p>
+                        <p><b>Cụm công nghiệp:</b> 26 cụm công nghiệp với 1.120 ha</p>
+                        <p><b>Tình hình đầu tư: </b>Bắt đầu quan tâm thu hút vốn FDI từ năm 1997, đến hết năm 2022, Phú Thọ đã có gần 190 dự án FDI đang hoạt động với tổng số vốn đăng ký khoảng 2.900 triệu USD.</p>
+                        <p><b>Đối tác đầu tư:</b> Hàn Quốc, Trung Quốc, Nhật Bản, Singapore, Hoa Kỳ, Ấn Độ…</p>
+                        <p><b>Tiềm năng, lợi thế:</b> Vị trí địa lý của Phú Thọ đã tạo cho Phú Thọ có nhiều điều kiện thuận lợi và tiềm năng to lớn để sản xuất kinh doanh, giao lưu, phát triển kinh tế với cả trong nước và ngoài nước.</p>
+                        <p>Chính sách phát triển tốt tạo điều kiện cho các doanh nghiệp phát triển. Hạ tầng các KCN đang được tích cực triển khai xây dựng giúp tỉnh cải thiện vị trí địa kinh tế, khai thác có hiệu quả hơn các tiềm năng, lợi thế trong thu hút đầu tư.</p>
+                    </div>
+                </div>
+            </div>
+            <div role="article"
+                 x-bind:class="{'translate-x-full': !showInfoPin}"
+                 class="absolute top-0 right-0 w-full h-full bg-white overflow-auto transition-all">
+
+                <div class="p-4 lg:p-8 border-b shadow">
+                    <div class="flex gap-4">
+                        <div class="overflow-hidden rounded aspect-square w-[100px]">
+                            <img class="w-full h-full" src="https://iphub.vn/wp-content/uploads/2023/08/gia-lach-300x169.jpg" alt="thumb">
+                        </div>
+                        <div class="flex-1 flex flex-col gap-3 py-2">
+                            <div class="font-bold text-lg">Gia Lách – IP</div>
+                            <div class="flex gap-4">
+                                <button type="button"
+                                        class="px-4 py-1.5 rounded bg-blue-900 text-white flex gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-mail-forward" width="24" height="24" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M12 18h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5"></path>
+                                        <path d="M3 6l9 6l9 -6"></path>
+                                        <path d="M15 18h6"></path>
+                                        <path d="M18 15l3 3l-3 3"></path>
+                                    </svg>
+                                    Contact IP
+                                </button>
+                                <a href="#" class="px-4 py-1.5 rounded border-2 border-red-500 text-red-500 flex gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-player-play" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M7 4v16l13 -8z"></path>
+                                    </svg>
+                                    Video
+                                </a>
+                            </div>
+                        </div>
+                        <a href="#"
+                           x-on:click.prevent="closePin"
+                           class="close flex items-center justify-center w-8 h-8 border border-gray-500 text-gray-500 rounded hover:bg-black hover:text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.3" stroke="currentColor" class="w-8/12 h-8/12">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="flex gap-2 p-4 bg-gray-100 max-w-full">
+                    <a
+                            data-fancybox="gallery"
+                            data-src="https://lipsum.app/id/2/1600x1200"
+                            data-caption="Optional caption,&lt;br /&gt;that can contain &lt;em&gt;HTML&lt;/em&gt; code"
+                    >
+                        <img src="https://lipsum.app/id/2/200x150" width="200" height="150" alt="" />
+                    </a>
+
+                    <a data-fancybox="gallery" data-src="https://lipsum.app/id/3/1600x1200">
+                        <img src="https://lipsum.app/id/3/200x150" width="200" height="150" alt="" />
+                    </a>
+
+                    <a data-fancybox="gallery" data-src="https://lipsum.app/id/4/1600x1200">
+                        <img src="https://lipsum.app/id/4/200x150" width="200" height="150" alt="" />
+                    </a>
+                    <a data-fancybox="gallery" data-src="https://lipsum.app/id/4/1600x1200">
+                        <img src="https://lipsum.app/id/4/200x150" width="200" height="150" alt="" />
+                    </a>
+                    <a data-fancybox="gallery" data-src="https://lipsum.app/id/4/1600x1200">
+                        <img src="https://lipsum.app/id/4/200x150" width="200" height="150" alt="" />
+                    </a>
+                    <a data-fancybox="gallery" data-src="https://lipsum.app/id/4/1600x1200">
+                        <img src="https://lipsum.app/id/4/200x150" width="200" height="150" alt="" />
+                    </a>
+                    <a data-fancybox="gallery" data-src="https://lipsum.app/id/4/1600x1200">
+                        <img src="https://lipsum.app/id/4/200x150" width="200" height="150" alt="" />
+                    </a>
+                </div>
+
+                <div id="industry-content" class="entry-content px-2 py-4 lg:p-8">
+                    <h3 class="text-xl font-bold my-3"><span style="font-size: 14px;">Thông tin chi tiết Khu Công nghiệp Phú Hà – Phú Thọ</span></h3>
+                    <ul class="additional-details clearfix">
+                        <li><span style="font-size: 14px;"><b>Tên:</b> Khu Công nghiệp Phú Hà – Phú Thọ</span></li>
+                        <li><span style="font-size: 14px;"><b>Chủ đầu tư:</b> Công ty cổ phần tổng công ty Viglacera</span></li>
+                        <li><span style="font-size: 14px;"><b>Mã số:</b> PHUHA-IP-PT – <b>Thời gian vận hành</b>: 2016</span></li>
+                        <li><span style="font-size: 14px;"><b>Địa chỉ:</b> Xã Phú Hộ, Hà Lộc, Hà Thạch, thị xã Phú Thọ, tỉnh Phú Thọ</span></li>
+                        <li><span style="font-size: 14px;"><b>Tổng diện tích:</b> 450ha</span></li>
+                        <li><span style="font-size: 14px;"><b>Diện tích xưởng:</b> 1000m² Land: Minimum land plot:10 ,000 m2 Factory: Built up area:1,000m2</span></li>
+                        <li><span style="font-size: 14px;"><b>Mật độ XD (%):</b> 60 (%)</span></li>
+                        <li><span style="font-size: 14px;"><b>Giá:</b> Quote</span></li>
+                    </ul>
+                    <div class="common-note">
+                        <h4 class="common-note-heading"><span style="font-size: 14px;">Ghi chú:</span></h4>
+                        <p><span style="font-size: 14px;">Miễn thuế 02 năm ; Giảm 50% cho 04 năm tiếp theo (Nghị định 218/2013/NĐ-CP)</span></p>
+                    </div>
+                    <p></p><div class="table-responsive overflow-x-auto max-w-full"><table class="">
+                    <colgroup>
+                        <col class="span1">
+                        <col class="span2">
+                        <col class="span5"> </colgroup>
+                    <tbody class="">
+                    <tr class="">
+                        <th class="" colspan="2"><span style="font-size: 14px;">Hạng mục</span></th>
+                        <th class=""><span style="font-size: 14px;">Chi tiết</span></th>
+                    </tr>
+                    </tbody>
+                    <tbody class=""><!-- IP OVERVIEW INFO -->
+                    <tr id="header-row-group-1" class="">
+                        <td class="" colspan="3"><span style="font-size: 14px;"><b>OVERVIEW:</b></span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Nhà đầu tư hạ tầng</span></td>
+                        <td class=""><span style="font-size: 14px;">Công ty cổ phần tổng công ty Viglacera</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Địa điểm</span></td>
+                        <td class=""><span style="font-size: 14px;">Xã Phú Hộ, Hà Lộc, Hà Thạch, thị xã Phú Thọ, tỉnh Phú Thọ</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="4"><span style="font-size: 14px;">Diện tích</span></td>
+                        <td class=""><span style="font-size: 14px;">Tổng diện tích</span></td>
+                        <td class=""><span style="font-size: 14px;">450</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Diện tích đất xưởng</span></td>
+                        <td class=""></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Diện tích còn trống</span></td>
+                        <td class=""></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Tỷ lệ cây xanh</span></td>
+                        <td class=""></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Thời gian vận hành</span></td>
+                        <td class=""><span style="font-size: 14px;">2016</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Nhà đầu tư hiện tại</span></td>
+                        <td class=""><span style="font-size: 14px;">có 13 nhà đầu tư thứ cấp với 14 dự án</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Ngành nghề chính</span></td>
+                        <td class=""><span style="font-size: 14px;">Công nghệ cao, chủ yếu là công nghiệp điện tử, vật liệu xây dựng cao cấp, chế biến thực phẩm, đồ uống, các mặt hàng cơ khí, dược phẩm</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Tỷ lệ lấp đầy</span></td>
+                        <td class=""><span style="font-size: 14px;">80%</span></td>
+                    </tr>
+                    <tr id="header-row-group-200" class="">
+                        <td class="" colspan="3"><span style="font-size: 14px;"><b>LOCATION &amp; DISTANCE:</b></span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Đường bộ</span></td>
+                        <td class=""><span style="font-size: 14px;">To Hanoi City: 100km</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Hàng không</span></td>
+                        <td class=""><span style="font-size: 14px;">To Noi Bai International airport: 80km</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Xe lửa</span></td>
+                        <td class=""><span style="font-size: 14px;">yes</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Cảng biển</span></td>
+                        <td class=""><span style="font-size: 14px;">Hai Phong port:170km</span></td>
+                    </tr>
+                    <tr id="header-row-group-300" class="">
+                        <td class="" colspan="3"><span style="font-size: 14px;"><b>INFRASTRUCTURE:</b></span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Địa chất</span></td>
+                        <td class=""><span style="font-size: 14px;">Hard soil: 1,5-2,5kg/cm2</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="2"><span style="font-size: 14px;">Giao thông nội khu</span></td>
+                        <td class=""><span style="font-size: 14px;">Đường chính</span></td>
+                        <td class=""><span style="font-size: 14px;">Width: 31m, Number of lane: 4 lanes</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Đường nhánh phụ</span></td>
+                        <td class=""><span style="font-size: 14px;">Width: 18,5&amp;13,5 m, Number of lane:2lanes</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="2"><span style="font-size: 14px;">Nguồn điện</span></td>
+                        <td class=""><span style="font-size: 14px;">Điện áp</span></td>
+                        <td class=""><span style="font-size: 14px;">Power line: 110/22KV</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Công suất nguồn</span></td>
+                        <td class=""><span style="font-size: 14px;">63 MVA</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="2"><span style="font-size: 14px;">Nước sạch</span></td>
+                        <td class=""><span style="font-size: 14px;">Công suất</span></td>
+                        <td class=""></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Công suất cao nhất</span></td>
+                        <td class=""><span style="font-size: 14px;">13500m3/ngày đêm</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="1"><span style="font-size: 14px;">Hệ thống xử lý nước thải</span></td>
+                        <td class=""><span style="font-size: 14px;">Công suất</span></td>
+                        <td class=""><span style="font-size: 14px;">6500m3/ngày đêm</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Internet và viễn thông</span></td>
+                        <td class=""><span style="font-size: 14px;">ADSL, Fireber &amp; Telephone line</span></td>
+                    </tr>
+                    <tr id="header-row-group-400" class="">
+                        <td class="" colspan="3"><span style="font-size: 14px;"><b>LEASING PRICE:</b></span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="6"><span style="font-size: 14px;">Đất</span></td>
+                        <td class=""><span style="font-size: 14px;">Giá thuê đất</span></td>
+                        <td class=""><span style="font-size: 14px;">Quote</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Thời hạn thuê</span></td>
+                        <td class=""><span style="font-size: 14px;">2066</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Loại/Hạng</span></td>
+                        <td class=""><span style="font-size: 14px;">Level A</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Phương thức thanh toán</span></td>
+                        <td class=""><span style="font-size: 14px;">12 months</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Đặt cọc</span></td>
+                        <td class=""><span style="font-size: 14px;">10%</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Diện tích tối thiểu</span></td>
+                        <td class=""><span style="font-size: 14px;">1ha</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Xưởng</span></td>
+                        <td class=""><span style="font-size: 14px;">$3</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="2"><span style="font-size: 14px;">Phí quản lý</span></td>
+                        <td class=""><span style="font-size: 14px;">Phí quản lý</span></td>
+                        <td class=""><span style="font-size: 14px;">0.4 USD/m2</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Phương thức thanh toán</span></td>
+                        <td class=""><span style="font-size: 14px;">yearly</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="5"><span style="font-size: 14px;">Giá điện</span></td>
+                        <td class=""><span style="font-size: 14px;">Giờ cao điểm</span></td>
+                        <td class=""><span style="font-size: 14px;">0.1 USD</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Bình thường</span></td>
+                        <td class=""><span style="font-size: 14px;">0.05 USD</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Giờ thấp điểm</span></td>
+                        <td class=""><span style="font-size: 14px;">0.03 USD</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Phương thức thanh toán</span></td>
+                        <td class=""><span style="font-size: 14px;">Monthly</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Nhà cung cấp</span></td>
+                        <td class=""><span style="font-size: 14px;">EVN</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="3"><span style="font-size: 14px;">Giá nước sạch</span></td>
+                        <td class=""><span style="font-size: 14px;">Giá nước</span></td>
+                        <td class=""><span style="font-size: 14px;">0.4 USD/m3</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Phương thức thanh toán</span></td>
+                        <td class=""><span style="font-size: 14px;">Monthly</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Nhà cung cấp nước</span></td>
+                        <td class=""><span style="font-size: 14px;">Charged by Gov. suppliers</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class="" rowspan="4"><span style="font-size: 14px;">Phí nước thải</span></td>
+                        <td class=""><span style="font-size: 14px;">Giá thành</span></td>
+                        <td class=""><span style="font-size: 14px;">0.28 USD/m3</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Phương thức thanh toán</span></td>
+                        <td class=""><span style="font-size: 14px;">Monthly</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Chất lượng nước trước khi xử lý</span></td>
+                        <td class=""><span style="font-size: 14px;">Level B</span></td>
+                    </tr>
+                    <tr class="">
+                        <td class=""><span style="font-size: 14px;">Chất lượng nước sau khi xử lý</span></td>
+                        <td class=""><span style="font-size: 14px;">Level A (QCVN 40:2011/BTNMT)</span></td>
+                    </tr>
+                    <tr class="">
+                        <td colspan="2" class=""><span style="font-size: 14px;">Phí khác</span></td>
+                        <td class=""><span style="font-size: 14px;">Yes</span></td>
+                    </tr>
+                    </tbody>
+                </table></div>
+                    <p>&nbsp;</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/gh/hosuaby/Leaflet.SmoothMarkerBouncing@v3.0.3/dist/bundle.js"
+        crossorigin="anonymous"></script>
+<script src="./js/vn.js"></script>
+</body>
+</html>
